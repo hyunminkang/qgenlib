@@ -5,6 +5,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -pthread -std=c++11")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+
 
 find_path(HTS_INCLUDE_DIRS htslib/bgzf.h ../htslib/bgzf.h HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
 if(NOT HTS_INCLUDE_DIRS )
@@ -44,13 +47,13 @@ set(SOURCE_FILES
     qgenlib/qgen_except.h
     qgenlib/tsv_reader.h)
 
-ADD_LIBRARY(libqgen STATIC ${SOURCE_FILES})
+ADD_LIBRARY(qgen STATIC ${SOURCE_FILES})
 
 SET(APP_EXE testqgen)
 
 ADD_EXECUTABLE(${APP_EXE} test_qgen.cpp) 
 
-TARGET_LINK_LIBRARIES(${APP_EXE} libqgen ${HTS_LIBRARIES} ${ZLIB})
+TARGET_LINK_LIBRARIES(${APP_EXE} qgen ${HTS_LIBRARIES} ${ZLIB})
 
 find_library(ZLIB z HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
 if(NOT ZLIB)
