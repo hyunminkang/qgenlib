@@ -9,14 +9,14 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 
 
-find_path(HTS_INCLUDE_DIRS htslib/bgzf.h ../htslib/bgzf.h HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
+find_path(HTS_INCLUDE_DIRS htslib/bgzf.h HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/ ../htslib/)
 if(NOT HTS_INCLUDE_DIRS )
     message(FATAL_ERROR "libhts HTS_INCLUDE_DIRS not found")
 endif()
 
 message(STATUS ${HTS_INCLUDE_DIRS})
 
-find_library(HTS_LIBRARIES hts ../hts HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
+find_library(HTS_LIBRARIES libhts.a hts HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/ ../htslib/)
 if(NOT HTS_LIBRARIES)
     message(FATAL_ERROR "libhts HTS_LIBRARIES not found")
 endif()
@@ -53,11 +53,37 @@ SET(APP_EXE testqgen)
 
 ADD_EXECUTABLE(${APP_EXE} test_qgen.cpp) 
 
-TARGET_LINK_LIBRARIES(${APP_EXE} qgen ${HTS_LIBRARIES} ${ZLIB})
-
 find_library(ZLIB z HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
 if(NOT ZLIB)
     message(FATAL_ERROR "libz library not found")
 endif()
+
+find_library(CURLLIB curl HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
+if(NOT CURLLIB)
+    message(FATAL_ERROR "libcurl library not found")
+endif()
+
+find_package (BZip2)
+if (NOT BZIP2_FOUND)
+    message(FATAL_ERROR "libbz2 library not found")
+else()
+    include_directories(${BZIP2_INCLUDE_DIRS})
+    set(BZIP2 ${BZIP2_LIBRARIES})
+endif()
+
+find_library(LZMA lzma HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
+if(NOT LZMA)
+    message(WARNING "liblzma library not found, if you specified --disable-lzma when compiling libhts, please ignore this warning")
+    set(LZMA "")
+else()
+    set(LZMA ${LZMA_LIBRARIES})
+endif()
+
+find_library(CRYPTOLIB crypto HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
+if(NOT CRYPTOLIB)
+    message(FATAL_ERROR "libcrypto library not found")
+endif()
+
+TARGET_LINK_LIBRARIES(${APP_EXE} qgen ${HTS_LIBRARIES} ${ZLIB} ${ZLIB} ${BZIP2} ${LZMA} ${CURLLIB} ${CRYPTOLIB})
 
 install(TARGETS ${APP_EXE} RUNTIME DESTINATION bin)
