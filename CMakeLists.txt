@@ -34,6 +34,8 @@ set(SOURCE_FILES
     qgen_error.cpp
     qgen_utils.cpp
     tsv_reader.cpp
+    commands.cpp
+    qgenlib/commands.h
     qgenlib/genome_interval.h
     qgenlib/gtf.h
     qgenlib/hts_utils.h
