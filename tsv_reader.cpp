@@ -111,6 +111,18 @@ int32_t tsv_reader::int_field_at(int32_t idx) {
   return ( atoi(&str.s[fields[idx]]) );
 }
 
+int64_t tsv_reader::int64_field_at(int32_t idx) {
+  if ( idx >= nfields )
+    error("[E:%s:%d %s] Cannot access field at %d >= %d", __FILE__, __LINE__, __FUNCTION__, idx, nfields);
+  return ( strtoll(&str.s[fields[idx]], NULL, 10) );
+}
+
+uint64_t tsv_reader::uint64_field_at(int32_t idx) {
+  if ( idx >= nfields )
+    error("[E:%s:%d %s] Cannot access field at %d >= %d", __FILE__, __LINE__, __FUNCTION__, idx, nfields);
+  return ( strtoull(&str.s[fields[idx]], NULL, 10) );
+}
+
 double tsv_reader::double_field_at(int32_t idx) {
   if ( idx >= nfields )
     error("[E:%s:%d %s] Cannot access field at %d >= %d", __FILE__, __LINE__, __FUNCTION__, idx, nfields);    
@@ -258,7 +270,7 @@ int32_t dsv_hdr_reader::read_line() {
   return tokenize_fields();
 }
 
-bool dsv_hdr_reader::tokenize_fields() {
+int32_t dsv_hdr_reader::tokenize_fields() {
   tlr.buffer[tlr.last_line_length-1] = '\0';
 
   char* cursor = tlr.buffer;

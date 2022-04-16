@@ -35,6 +35,8 @@ set(SOURCE_FILES
     qgen_utils.cpp
     tsv_reader.cpp
     commands.cpp
+    dataframe.cpp
+    qgenlib/dataframe.h
     qgenlib/commands.h
     qgenlib/genome_interval.h
     qgenlib/gtf.h

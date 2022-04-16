@@ -182,23 +182,21 @@ int commandList::Read(int argc, char ** argv, int start)
   std::string cmd(argv[start]);
 
   //notice("pl.size() = %d", pl.size());
-  
   for(int32_t i=0; i < (int32_t)pl.size(); ++i) {
     longCommandList* ptr = pl[0]->Translate(argv[start]);
     if ( ptr != NULL ) {
       //notice("%s %x %s", cmd.c_str(), ptr->func, ptr->desc);            
       if ( ( cmd == ptr->desc ) && ( ptr->func != NULL ) ) {
-	fprintf(stderr, "[cramore %s] -- %s\n\n", ptr->desc, ptr->help);
-	fprintf(stderr, " Copyright (c) 2009-2017 by Hyun Min Kang and Adrian Tan\n");
-	fprintf(stderr, " Licensed under the Apache License v2.0 http://www.apache.org/licenses/\n");
-	return ptr->func(argc-start, argv+start);
+        fprintf(stderr, "[%s %s] -- %s\n\n", argv[0], ptr->desc, ptr->help);
+        fprintf(stderr, " Copyright (c) 2009-2022 by Hyun Min Kang and Adrian Tan\n");
+        fprintf(stderr, " Licensed under the Apache License v2.0 http://www.apache.org/licenses/\n");
+        return ptr->func(argc-start, argv+start);
       }
     }
   }
   HelpMessage();
   error("Cannot recognize the command %s. Run %s --help for detailed instruction", cmd.c_str(), argv[0]);
   return 1;  
-
   /*
   if ( index.find(cmd) == index.end() ) {
     cl.HelpMessage();

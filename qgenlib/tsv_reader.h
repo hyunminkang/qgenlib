@@ -37,16 +37,18 @@ public:
   int32_t read_line();             // read a line, returns the number of tokenzied fields (=nfields)
   const char* str_field_at(int32_t idx); // get a pointer to the string at index idx
   int32_t int_field_at(int32_t idx);     // get integer value at index idx
+  uint64_t uint64_field_at(int32_t idx); // get unsigned long long (uint64_t) value at index idx
+  int64_t int64_field_at(int32_t idx);   // get long long (int64_t) value at index idx  
   double double_field_at(int32_t idx);   // get double value at index idx
   int32_t store_to_vector(std::vector<std::string>& v); // store the tokenized values into string vectors
   bool jump_to(const char* reg);   // jump to a specific region using tabix
   bool jump_to(const char* chr, int32_t beg, int32_t end = INT_MAX); // jump to a specific region using tabix
 
- tsv_reader() : hp(NULL), tbx(NULL), itr(NULL), lstr(0), nfields(0), fields(NULL), nlines(0), delimiter(0) {
+  tsv_reader() : hp(NULL), tbx(NULL), itr(NULL), lstr(0), nfields(0), fields(NULL), nlines(0), delimiter(0) {
     str.l = str.m = 0; str.s = NULL;
   }
 
- tsv_reader(const char* filename) : hp(NULL), tbx(NULL), itr(NULL), lstr(0), nfields(0), fields(NULL), nlines(0), delimiter(0) {
+  tsv_reader(const char* filename) : hp(NULL), tbx(NULL), itr(NULL), lstr(0), nfields(0), fields(NULL), nlines(0), delimiter(0) {
     str.l = str.m = 0; str.s = NULL;    
     if ( !open(filename) )
       error("[E:%s:%s %s] Cannot open file %s for reading", __FILE__, __LINE__, __FUNCTION__, filename);    
@@ -81,7 +83,7 @@ public:
 
 class dsv_hdr_reader {
 protected:
-  bool tokenize_fields();
+  int32_t tokenize_fields();
   text_line_reader tlr;
   std::map<std::string,int32_t> col2idx;
   std::string delim;
