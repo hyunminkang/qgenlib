@@ -23,6 +23,7 @@ bool dataframe_t::load(const char* tsvfile) {
     for(int32_t i=0; i < ncols; ++i) {
       columns[i].push_back(tr.str_field_at(i));
     }
+    ++nrows;
   }
 
   tr.close();
