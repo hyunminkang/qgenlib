@@ -29,7 +29,7 @@ public:
   int32_t lstr;          // length of the string
   int32_t nfields;       // number of tokenized fields (from kstring_t)
   int32_t* fields;       // indices of the starting point to each field 
-  int32_t nlines;        // total number of lines read
+  uint64_t nlines;        // total number of lines read
   int32_t delimiter;     // delimiter to tokenize
   
   bool open(const char* filename); // open a file, set up the file handle

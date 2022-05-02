@@ -22,6 +22,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <inttypes.h>
 #include <stdarg.h>
 
 int32_t globalVerbosityThreshold = 100;
@@ -123,4 +124,64 @@ void catprintf(std::string &s, const char * msg, ...)
 
   s += buf;
   va_end(ap);
+}
+
+int32_t cat_join_int32(std::string& s, std::vector<int32_t>& v, const char* delim) {
+  char buf[65535];
+  int32_t len = 0, offset = 0;
+  int32_t n = (int32_t)v.size();
+  if ( n > 0 ) {
+    offset = sprintf(buf, "%d", v[0]);
+    for(int32_t i=1; i < n; ++i) {
+      offset += sprintf(buf + offset, "%s%d", delim, v[i]);
+      if ( offset > 65000 ) { // copy the string and reset
+        len += offset;
+        s += buf;
+        buf[0] = '\0';
+        offset = 0;
+      }
+    }
+    s += buf;
+  }
+  return len + offset;
+}
+
+int32_t cat_join_uint64(std::string& s, std::vector<uint64_t>& v, const char* delim) {
+  char buf[65535];
+  int32_t len = 0, offset = 0;
+  int32_t n = (int32_t)v.size();
+  if ( n > 0 ) {
+    offset = sprintf(buf, "%" PRIu64, v[0]);
+    for(int32_t i=1; i < n; ++i) {
+      offset += sprintf(buf + offset, "%s%" PRIu64, delim, v[i]);
+      if ( offset > 65000 ) { // copy the string and reset
+        len += offset;        
+        s += buf;
+        buf[0] = '\0';
+        offset = 0;
+      }
+    }
+    s += buf;
+  }
+  return len + offset;  
+}
+
+int32_t cat_join_str(std::string& s, std::vector<std::string>& v, const char* delim) {
+  char buf[65535];
+  int32_t len = 0, offset = 0;
+  int32_t n = (int32_t)v.size();
+  if ( n > 0 ) {
+    offset = sprintf(buf, "%s", v[0].c_str());
+    for(int32_t i=1; i < n; ++i) {
+      if ( offset + v[i].size() > 65536 ) { // copy the string and reset
+        len += offset;
+        s += buf;
+        buf[0] = '\0';
+        offset = 0;
+      }      
+      offset += sprintf(buf + offset, "%s%s", delim, v[i].c_str());
+    }
+    s += buf;
+  }
+  return offset + len;
 }

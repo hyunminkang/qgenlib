@@ -501,6 +501,7 @@ int32_t bcf_hdr_sample_index(bcf_hdr_t* h, const char* id);
 #define bcf_set_qual(v, q) ((v)->qual = (q))
 
 void hprintf(htsFile* fp, const char * msg, ...);
+void hprint_str(htsFile* fp, const std::string& s);
 
 class GenomeInterval;
 void parse_intervals(std::vector<GenomeInterval>& intervals, std::string interval_list, std::string interval_string);

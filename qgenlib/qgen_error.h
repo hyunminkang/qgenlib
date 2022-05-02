@@ -19,6 +19,7 @@
 #define _ERROR_H_
 
 #include <string>
+#include <vector>
 
 //extern "C" {
 //  size_t hts_realloc_or_die(unsigned long, unsigned long, unsigned long, unsigned long, int, void**, char const*);
@@ -34,8 +35,13 @@ void warning(const char * msg, ...);
 void numerror(const char * msg, ...);
 void notice(const char * msg, ...);
 void verbose(int32_t priority, const char * msg, ...);
-void catprintf(std::string &s, const char * msg, ...);
 
+// these are string manupulation functions
+void catprintf(std::string &s, const char * msg, ...);
+int32_t cat_join_str(std::string& s, std::vector<std::string>& v, const char* delim);
+int32_t cat_join_uint64(std::string& s, std::vector<uint64_t>& v, const char* delim);
+int32_t cat_join_int32(std::string& s, std::vector<int32_t>& v, const char* delim);
+  
 extern int32_t globalVerbosityThreshold;
 
 // #ifdef __cplusplus

@@ -1038,6 +1038,18 @@ void hprintf(htsFile* fp, const char * msg, ...) {
   va_end(ap);
 }
 
+void hprint_str(htsFile* fp, const std::string& s) {
+  int ret;
+  if ( fp->format.compression != no_compression )
+    ret = bgzf_write(fp->fp.bgzf, s.c_str(), (int32_t)s.size());
+  else
+    ret = hwrite(fp->fp.hfile, s.c_str(), (int32_t)s.size());
+
+  if ( ret < 0 ) {
+    error("[E:%s:%d %s] [E:%s:%d %s] hprintf failed. Aborting..",__FILE__,__LINE__,__FUNCTION__, __FILE__, __LINE__, __FUNCTION__);
+  }
+}
+
 void parse_intervals(std::vector<GenomeInterval>& intervals, std::string interval_list, std::string interval_string)
 {
     intervals.clear();
