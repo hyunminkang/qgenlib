@@ -24,13 +24,14 @@
 #ifndef __GTF_INTERVAL_TREE_H
 #define __GTF_INTERVAL_TREE_H
 
+#include <limits>
+#include <cstddef>
 #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <memory>
 #include <cassert>
 #include <stdexcept>
-#include <limits>
 
 template <class Scalar, typename Value>
 class gtfInterval {
