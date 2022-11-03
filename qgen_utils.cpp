@@ -170,3 +170,16 @@ unsigned int str_hash(const char* s, unsigned int seed)
   return hash;
 }
 
+bool str2intervals(std::vector<uint64_t>& begs, std::vector<uint64_t>& ends, const char* str, const char* delims_multi, const char* delims_interval) {
+  std::vector<std::string> tokens, intervals;
+  split(tokens, delims_multi, str);
+  for(int32_t i=0; i < (int32_t) tokens.size(); ++i) {
+    intervals.clear();
+    split(intervals, delims_interval, tokens[i]);
+    if ( intervals.size() != 2 )
+      return false;
+    begs.push_back(strtoull(intervals[0].c_str(), NULL, 10));
+    ends.push_back(strtoull(intervals[1].c_str(), NULL, 10));    
+  }
+  return true;
+}
