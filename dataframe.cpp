@@ -27,6 +27,7 @@ bool dataframe_t::load(const char* tsvfile) {
   }
 
   tr.close();
+  return true;
 }
 
 int32_t dataframe_t::add_empty_column(const char* colname) {
