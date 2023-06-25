@@ -42,8 +42,11 @@ bool tsv_reader::open(const char* filename) {
 }
 
 bool tsv_reader::close() {
+//  notice("foo %s", filename.c_str());
   if ( hp == NULL ) return false;
+//  notice("bar");
   int32_t ret = hts_close(hp);
+//  notice("baz %d", ret);
   hp = NULL;
   return ret == 0;
 }

@@ -28,114 +28,115 @@
 #include <climits>
 #include "qgen_error.h"
 #include "gtf_interval_tree.h"
+#include "pos_loci.h"
 
-// A single genomic int32_t interval
-class posLocus {
- public:
-  int32_t beg1; // includes 1-based, excludes 0-based
-  int32_t end0; // excludes 1-based, includes 0-based
+// // A single genomic int32_t interval
+// class posLocus {
+//  public:
+//   int32_t beg1; // includes 1-based, excludes 0-based
+//   int32_t end0; // excludes 1-based, includes 0-based
 
-  // constructor
-  // b : beg1 value
-  // e : end0 value
-  posLocus(int32_t b, int32_t e) : beg1(b), end0(e) {}
+//   // constructor
+//   // b : beg1 value
+//   // e : end0 value
+//   posLocus(int32_t b, int32_t e) : beg1(b), end0(e) {}
 
-  // compare between genomeLocus
-  // l : rhs argument of the same type
-  // returns true iff this < l
-  inline bool operator< (const posLocus& l) const {
-    if ( beg1 == l.beg1 ) { return end0 < l.end0; }
-    else return beg1 < l.beg1;    
-  }
+//   // compare between genomeLocus
+//   // l : rhs argument of the same type
+//   // returns true iff this < l
+//   inline bool operator< (const posLocus& l) const {
+//     if ( beg1 == l.beg1 ) { return end0 < l.end0; }
+//     else return beg1 < l.beg1;    
+//   }
 
-  // compare between genomeLocus
-  // l : rhs argument of the same type
-  // returns true iff this == l
-  inline bool operator== (const posLocus& l) const {
-    return ( ( beg1 == l.beg1 ) && ( end0 == l.end0 ) );
-  }
+//   // compare between genomeLocus
+//   // l : rhs argument of the same type
+//   // returns true iff this == l
+//   inline bool operator== (const posLocus& l) const {
+//     return ( ( beg1 == l.beg1 ) && ( end0 == l.end0 ) );
+//   }
   
-  // returns length of the interval
-  int32_t length() const { return end0-beg1+1; }
+//   // returns length of the interval
+//   int32_t length() const { return end0-beg1+1; }
 
-  // returns the total overlapping intervals
-  int32_t overlapBases(int32_t _beg1, int32_t _end0) const {
-    if ( ( beg1 <= end0 ) && ( _beg1 <= end0 ) ) {
-      return ( _beg1 < end0 ? _beg1 : end0 ) - ( beg1 < end0 ? end0 : beg1 ) + 1;
-    }
-    else return 0;    
-  }
+//   // returns the total overlapping intervals
+//   int32_t overlapBases(int32_t _beg1, int32_t _end0) const {
+//     if ( ( beg1 <= end0 ) && ( _beg1 <= end0 ) ) {
+//       return ( _beg1 < end0 ? _beg1 : end0 ) - ( beg1 < end0 ? end0 : beg1 ) + 1;
+//     }
+//     else return 0;    
+//   }
 
-  int32_t overlapBases(const posLocus& l) const {
-    return overlapBases(l.beg1, l.end0);
-  }
+//   int32_t overlapBases(const posLocus& l) const {
+//     return overlapBases(l.beg1, l.end0);
+//   }
 
-  bool overlaps(int32_t _beg1, int32_t _end0) const {
-    if ( ( beg1 <= _end0 )  && ( _beg1 <= end0 ) )
-      return true;
-    else 
-      return false;
-  }
+//   bool overlaps(int32_t _beg1, int32_t _end0) const {
+//     if ( ( beg1 <= _end0 )  && ( _beg1 <= end0 ) )
+//       return true;
+//     else 
+//       return false;
+//   }
 
-  // check overlap with other locus
-  bool overlaps (const posLocus& l) const {
-    return overlaps(l.beg1, l.end0);
-  }
+//   // check overlap with other locus
+//   bool overlaps (const posLocus& l) const {
+//     return overlaps(l.beg1, l.end0);
+//   }
 
-  // merge two locus if possible
-  bool merge (const posLocus& l) {
-    if ( ( beg1-1 <= l.end0 )  && ( l.beg1-1 <= end0 ) ) {
-      if ( l.beg1 < beg1 ) beg1 = l.beg1;
-      if ( l.end0 > end0 ) end0 = l.end0;
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
+//   // merge two locus if possible
+//   bool merge (const posLocus& l) {
+//     if ( ( beg1-1 <= l.end0 )  && ( l.beg1-1 <= end0 ) ) {
+//       if ( l.beg1 < beg1 ) beg1 = l.beg1;
+//       if ( l.end0 > end0 ) end0 = l.end0;
+//       return true;
+//     }
+//     else {
+//       return false;
+//     }
+//   }
 
-  // check whether the interval contains a particular position in 1-based coordinate
-  bool contains1(int32_t pos1 = INT_MAX) const {
-    return ( ( pos1 >= beg1 ) && ( pos1 <= end0 ) );
-  }
+//   // check whether the interval contains a particular position in 1-based coordinate
+//   bool contains1(int32_t pos1 = INT_MAX) const {
+//     return ( ( pos1 >= beg1 ) && ( pos1 <= end0 ) );
+//   }
 
-  // check whether the interval contains a particular position in 0-based coordinate  
-  bool contains0(int32_t pos0) const { return contains1(pos0+1); }
+//   // check whether the interval contains a particular position in 0-based coordinate  
+//   bool contains0(int32_t pos0) const { return contains1(pos0+1); }
 
-  // parse a string in [chr]:[beg1]-[end0] format 
-  static bool parseRegion(const char* region, std::string& chrom, int32_t& beg1, int32_t& end0) {
-    char buf[255];
-    strcpy(buf,region);
-    const char* pcolon = strchr(region,':');
-    const char* pminus = strchr(pcolon+1,'-');
-    if ( pcolon == NULL )
-      error("Cannot parse %s in genomeLocus::genomeLocus()");
-    chrom.assign(region,0,pcolon-region);
-    beg1 = atoi(pcolon+1);
-    if ( pminus == NULL ) end0 = INT_MAX;
-    else {
-      end0 = atoi(pminus+1);
-      if ( end0 == 0 ) end0 = INT_MAX;
-    }
-    return true;
-  }
+//   // parse a string in [chr]:[beg1]-[end0] format 
+//   static bool parseRegion(const char* region, std::string& chrom, int32_t& beg1, int32_t& end0) {
+//     char buf[255];
+//     strcpy(buf,region);
+//     const char* pcolon = strchr(region,':');
+//     const char* pminus = strchr(pcolon+1,'-');
+//     if ( pcolon == NULL )
+//       error("Cannot parse %s in genomeLocus::genomeLocus()");
+//     chrom.assign(region,0,pcolon-region);
+//     beg1 = atoi(pcolon+1);
+//     if ( pminus == NULL ) end0 = INT_MAX;
+//     else {
+//       end0 = atoi(pminus+1);
+//       if ( end0 == 0 ) end0 = INT_MAX;
+//     }
+//     return true;
+//   }
 
-  // parse a string in [chr]:[beg1]-[end0] format 
-  static bool parseBegLenStrand(const char* region, std::string& chrom, int32_t& beg1, int32_t& end0, bool& fwdStrand) {
-    char buf[255];
-    strcpy(buf,region);
-    const char* pcolon1 = strchr(region,':');
-    const char* pcolon2 = strchr(pcolon1+1,':');
-    const char* pcolon3 = strchr(pcolon2+1,':');    
-    if ( pcolon1 == NULL )
-      error("Cannot parse %s in genomeLocus::genomeLocus()");
-    chrom.assign(region,0,pcolon1-region);
-    beg1 = atoi(pcolon1+1);
-    end0 = beg1 + atoi(pcolon2+1) - 1;
-    fwdStrand = ((pcolon3 != NULL) && (pcolon3[1] == '-')) ? false : true;
-    return true;
-  }  
-};
+//   // parse a string in [chr]:[beg1]-[end0] format 
+//   static bool parseBegLenStrand(const char* region, std::string& chrom, int32_t& beg1, int32_t& end0, bool& fwdStrand) {
+//     char buf[255];
+//     strcpy(buf,region);
+//     const char* pcolon1 = strchr(region,':');
+//     const char* pcolon2 = strchr(pcolon1+1,':');
+//     const char* pcolon3 = strchr(pcolon2+1,':');    
+//     if ( pcolon1 == NULL )
+//       error("Cannot parse %s in genomeLocus::genomeLocus()");
+//     chrom.assign(region,0,pcolon1-region);
+//     beg1 = atoi(pcolon1+1);
+//     end0 = beg1 + atoi(pcolon2+1) - 1;
+//     fwdStrand = ((pcolon3 != NULL) && (pcolon3[1] == '-')) ? false : true;
+//     return true;
+//   }  
+// };
 
 class gtfGene;
 class gtfTranscript;

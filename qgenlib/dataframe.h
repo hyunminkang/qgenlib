@@ -43,6 +43,10 @@ public:
     return columns[col2idx[colname]];
   }
 
+  inline bool has_column(const char* colname) {
+    return col2idx.find(colname) != col2idx.end();
+  }
+
   inline int32_t get_colidx(const char* colname) {
     return col2idx[colname];
   }

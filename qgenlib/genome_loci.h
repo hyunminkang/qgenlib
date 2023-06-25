@@ -140,8 +140,8 @@ class genomeLocus {
   bool contains0(const char* chr, int32_t pos0) const { return contains1(chr,pos0+1); }
 
   bool contains1(const char* chr = NULL, int32_t pos1 = INT_MAX) const {
-    notice("contains1 called pos1 = %d", pos1);
-    notice("chr=%s",chr);
+    //notice("contains1 called pos1 = %d", pos1);
+    //notice("chr=%s",chr);
     if ( ( chr == NULL ) || ( chrom == chr ) ) {
       return ( ( pos1 >= beg1 ) && ( pos1 <= end0 ) );
     }
@@ -301,7 +301,7 @@ class genomeLoci {
   }
 
   bool moveTo(const char* chr = NULL, int32_t pos1 = INT_MAX) {
-    notice("[%s:%d %s] (%s, %d)", __FILE__, __LINE__, __PRETTY_FUNCTION__, chr == NULL ? "NULL" : chr, pos1);
+    //notice("[%s:%d %s] (%s, %d)", __FILE__, __LINE__, __PRETTY_FUNCTION__, chr == NULL ? "NULL" : chr, pos1);
     
     if ( loci.empty() ) return false;
 
@@ -312,18 +312,18 @@ class genomeLoci {
     genomeLocus locus(chr, pos1, pos1);
     it = loci.lower_bound(locus);
     if ( it == loci.begin() ) { // do nothing
-      notice("beg");
+      //notice("beg");
       return (it->contains1(chr,pos1));
     }
     else if ( it == loci.end() ) {
-      notice("end");      
+      //notice("end");      
       std::set<genomeLocus>::iterator i = it;
       --i;
       if ( i->contains1(chr,pos1) ) { it = i; return true; }
       else { rewind(); return false; }
     }
     else {
-      notice("mid");                  
+      //notice("mid");                  
       if ( it->contains1(chr,pos1) ) return true;
       else {
 	std::set<genomeLocus>::iterator i = it;
@@ -336,7 +336,7 @@ class genomeLoci {
 
   bool contains1(const char* chr, int32_t pos1) {
     if ( loci.empty() ) return false;
-    notice("contains1(%s,%d) called", chr, pos1);    
+    //notice("contains1(%s,%d) called", chr, pos1);    
     genomeLocus locus(chr, pos1, pos1);
     std::set<genomeLocus>::iterator it2 = loci.lower_bound(locus);
     if ( it2 != loci.begin() ) --it2;
@@ -446,7 +446,7 @@ class genomeLocusMap {
   }
 
   bool moveTo(const char* chr = NULL, int32_t pos1 = INT_MAX) {
-    notice("[%s:%d %s] (%s, %d)", __FILE__, __LINE__, __PRETTY_FUNCTION__, chr == NULL ? "NULL" : chr, pos1);
+    //notice("[%s:%d %s] (%s, %d)", __FILE__, __LINE__, __PRETTY_FUNCTION__, chr == NULL ? "NULL" : chr, pos1);
 
     if ( loci.empty() ) return false;    
 
@@ -477,7 +477,7 @@ class genomeLocusMap {
   }
 
   bool contains1(const char* chr, int32_t pos1) {
-    notice("contains1(%s,%d) called", chr, pos1);
+    //notice("contains1(%s,%d) called", chr, pos1);
     genomeLocus locus(chr, pos1, pos1);
     typename std::map<genomeLocus,T>::iterator it2 = loci.lower_bound(locus);
     if ( it2 != loci.begin() ) --it2;

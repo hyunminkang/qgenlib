@@ -45,6 +45,7 @@ set(SOURCE_FILES
     qgenlib/qgen_error.h
     qgenlib/qgen_utils.h
     qgenlib/genome_loci.h
+    qgenlib/pos_loci.h
     qgenlib/gtf_interval_tree.h
     qgenlib/params.h
     qgenlib/qgen_constant.h
@@ -65,6 +66,11 @@ endif()
 find_library(CURLLIB curl HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
 if(NOT CURLLIB)
     message(FATAL_ERROR "libcurl library not found")
+endif()
+
+find_library(DEFLATELIB deflate HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
+if(NOT DEFLATELIB)
+    message(FATAL_ERROR "libdeflate library not found")
 endif()
 
 find_package (BZip2)
@@ -88,6 +94,6 @@ if(NOT CRYPTOLIB)
     message(FATAL_ERROR "libcrypto library not found")
 endif()
 
-TARGET_LINK_LIBRARIES(${APP_EXE} qgen ${HTS_LIBRARIES} ${ZLIB} ${ZLIB} ${BZIP2} ${LZMA} ${CURLLIB} ${CRYPTOLIB})
+TARGET_LINK_LIBRARIES(${APP_EXE} qgen ${HTS_LIBRARIES} ${ZLIB} ${ZLIB} ${BZIP2} ${LZMA} ${CURLLIB} ${DEFLATELIB} ${CRYPTOLIB})
 
 install(TARGETS ${APP_EXE} RUNTIME DESTINATION bin)

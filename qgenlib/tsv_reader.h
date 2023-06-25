@@ -55,8 +55,9 @@ public:
   }  
 
   ~tsv_reader() {
-    if ( str.s ) free(str.s);
-    if ( fields ) free(fields);
+    // if ( str.s ) free(str.s);
+    // if ( fields ) free(fields);
+    // if ( hp != NULL) close();
   }
 };
 
