@@ -68,7 +68,7 @@ if(NOT CURLLIB)
     message(FATAL_ERROR "libcurl library not found")
 endif()
 
-find_library(DEFLATELIB deflate HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
+find_library(DEFLATELIB libdeflate.a deflate HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/ ../libdeflate/)
 if(NOT DEFLATELIB)
     message(FATAL_ERROR "libdeflate library not found")
 endif()
