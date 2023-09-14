@@ -120,7 +120,7 @@ void catprintf(std::string &s, const char * msg, ...)
   va_start(ap, msg);
 
   char buf[1000];
-  vsprintf(buf, msg, ap);
+  vsnprintf(buf, 1000, msg, ap);
 
   s += buf;
   va_end(ap);
@@ -131,9 +131,9 @@ int32_t cat_join_int32(std::string& s, std::vector<int32_t>& v, const char* deli
   int32_t len = 0, offset = 0;
   int32_t n = (int32_t)v.size();
   if ( n > 0 ) {
-    offset = sprintf(buf, "%d", v[0]);
+    offset = snprintf(buf, 65535, "%d", v[0]);
     for(int32_t i=1; i < n; ++i) {
-      offset += sprintf(buf + offset, "%s%d", delim, v[i]);
+      offset += snprintf(buf + offset, 65535, "%s%d", delim, v[i]);
       if ( offset > 65000 ) { // copy the string and reset
         len += offset;
         s += buf;
@@ -151,9 +151,9 @@ int32_t cat_join_uint64(std::string& s, std::vector<uint64_t>& v, const char* de
   int32_t len = 0, offset = 0;
   int32_t n = (int32_t)v.size();
   if ( n > 0 ) {
-    offset = sprintf(buf, "%" PRIu64, v[0]);
+    offset = snprintf(buf, 65535, "%" PRIu64, v[0]);
     for(int32_t i=1; i < n; ++i) {
-      offset += sprintf(buf + offset, "%s%" PRIu64, delim, v[i]);
+      offset += snprintf(buf + offset, 65535, "%s%" PRIu64, delim, v[i]);
       if ( offset > 65000 ) { // copy the string and reset
         len += offset;        
         s += buf;
@@ -171,7 +171,7 @@ int32_t cat_join_str(std::string& s, std::vector<std::string>& v, const char* de
   int32_t len = 0, offset = 0;
   int32_t n = (int32_t)v.size();
   if ( n > 0 ) {
-    offset = sprintf(buf, "%s", v[0].c_str());
+    offset = snprintf(buf, 65535, "%s", v[0].c_str());
     for(int32_t i=1; i < n; ++i) {
       if ( offset + v[i].size() > 65536 ) { // copy the string and reset
         len += offset;
@@ -179,7 +179,7 @@ int32_t cat_join_str(std::string& s, std::vector<std::string>& v, const char* de
         buf[0] = '\0';
         offset = 0;
       }      
-      offset += sprintf(buf + offset, "%s%s", delim, v[i].c_str());
+      offset += snprintf(buf + offset, 65535, "%s%s", delim, v[i].c_str());
     }
     s += buf;
   }

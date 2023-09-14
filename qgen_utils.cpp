@@ -183,3 +183,8 @@ bool str2intervals(std::vector<uint64_t>& begs, std::vector<uint64_t>& ends, con
   }
   return true;
 }
+
+bool check_file_existence(const char* filename) {
+    struct stat buffer;
+    return (stat(filename, &buffer) == 0);
+}

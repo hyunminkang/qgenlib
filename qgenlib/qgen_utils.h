@@ -71,4 +71,6 @@ unsigned int str_hash(const char* s, unsigned int seed = 0);
 
 bool str2intervals(std::vector<uint64_t>& begs, std::vector<uint64_t>& ends, const char* str, const char* delims_multi = ",", const char* delims_interval = "-");
 
+bool check_file_existence(const char* filename);
+
 #endif
