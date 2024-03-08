@@ -6,7 +6,7 @@
 
 * [Command Line Arguments](examples/params.md) A macro-based command line parsing library implemented by Gonçalo Abecasis and used in many [tools](https://github.com/statgen).
 * [I/O Functions](examples/io.md) A collection of helper functions to output messages, and handle basic formats supported by [htslib](https://www.htslib.org/).
-* [TSV Functions](examples/tsv.md) Classes and libraries to aid basic data wrangling using tab-limited files.
+* [Handling TSV Files](examples/tsv.md) Classes and libraries to aid basic data wrangling using tab-limited files.
 * [Genomics](examples/genomics.md) Simple classes to handle simple genomic data types.
 * [Miscellaneous](examples/misc.md) Other utility functions to handle strings.
 
