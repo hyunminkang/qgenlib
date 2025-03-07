@@ -68,11 +68,6 @@ if(NOT CURLLIB)
     message(FATAL_ERROR "libcurl library not found")
 endif()
 
-find_library(DEFLATELIB libdeflate.a deflate HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/ ../libdeflate/)
-if(NOT DEFLATELIB)
-    message(FATAL_ERROR "libdeflate library not found")
-endif()
-
 find_package (BZip2)
 if (NOT BZIP2_FOUND)
     message(FATAL_ERROR "libbz2 library not found")
@@ -94,6 +89,6 @@ if(NOT CRYPTOLIB)
     message(FATAL_ERROR "libcrypto library not found")
 endif()
 
-TARGET_LINK_LIBRARIES(${APP_EXE} qgen ${HTS_LIBRARIES} ${ZLIB} ${ZLIB} ${BZIP2} ${LZMA} ${CURLLIB} ${DEFLATELIB} ${CRYPTOLIB})
+TARGET_LINK_LIBRARIES(${APP_EXE} qgen ${HTS_LIBRARIES} ${ZLIB} ${ZLIB} ${BZIP2} ${LZMA} ${CURLLIB} ${CRYPTOLIB})
 
 install(TARGETS ${APP_EXE} RUNTIME DESTINATION bin)
