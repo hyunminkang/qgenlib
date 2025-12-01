@@ -405,7 +405,7 @@ class genomeLocusMap {
   void rewind() { it = loci.begin(); }
   bool next() { ++it; return ( it != loci.end() ); }
   bool isend() { return ( it == loci.end() ); }
-  const std::pair<genomeLocus,T>& currentLocus() { return (*it); }
+  //const std::pair<genomeLocus,T> currentLocus() { return (*it); }
 
   // check the size 
   bool empty() { return loci.empty(); }
