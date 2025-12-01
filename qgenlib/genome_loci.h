@@ -25,6 +25,10 @@ class genomeLocus {
     snprintf(buf,255,"%s:%d-%d",c,b,e);
   }
 
+  genomeLocus() : chrom("0"), beg1(0), end0(0) {
+    snprintf(buf,255,"0:0-0");
+  }
+
   // convert [chr]:[beg1]-[end0] string int32_to int32_terval
   // 20:100-110 means [100,110] in 1-based [100,111) in 1-based [99,110) in 0-based
   genomeLocus(const char* region) {
@@ -401,7 +405,7 @@ class genomeLocusMap {
   void rewind() { it = loci.begin(); }
   bool next() { ++it; return ( it != loci.end() ); }
   bool isend() { return ( it == loci.end() ); }
-  const genomeLocus& currentLocus() { return (*it); }
+  const std::pair<genomeLocus,T>& currentLocus() { return (*it); }
 
   // check the size 
   bool empty() { return loci.empty(); }
