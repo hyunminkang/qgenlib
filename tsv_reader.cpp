@@ -78,7 +78,7 @@ int32_t tsv_reader::read_line() {
 
 bool tsv_reader::jump_to(const char* chr, int32_t beg, int32_t end) {
   char buf[65536];
-  sprintf(buf, "%s:%d-%d", chr, beg, end);
+  snprintf(buf, 65536, "%s:%d-%d", chr, beg, end);
   return jump_to(buf);
 }
 

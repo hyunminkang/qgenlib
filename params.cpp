@@ -36,7 +36,7 @@ void param::error(const char * format, ...)
   va_list ap;
   va_start(ap, format);
   char buf[65535];
-  vsprintf(buf, format, ap);
+  vsnprintf(buf, 65535, format, ap);
   va_end(ap);
 
   if (errors == NULL) {
@@ -53,7 +53,7 @@ void param::message(const char * format, ...)
   va_list ap;
   va_start(ap, format);
   char buf[65535];
-  vsprintf(buf, format, ap);
+  vsnprintf(buf, 65535, format, ap);
   va_end(ap);
 
   if (messages == NULL) {

@@ -1,94 +1,67 @@
-cmake_minimum_required(VERSION 2.8...3.23)
+cmake_minimum_required(VERSION 3.10) # 2.8 is very old; 3.10+ is recommended for modern targets
 project(qgenlib)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -pthread -std=c++11")
+# Don't use -O3 or -std in flags globally; use target_compile_options if needed.
+# This prevents overriding the parent project's flags.
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 
-
+# --- 1. Find HTSLib (Keep this if it's custom, but standard paths usually work better) ---
 find_path(HTS_INCLUDE_DIRS htslib/bgzf.h HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/ ../htslib/)
-if(NOT HTS_INCLUDE_DIRS )
-    message(FATAL_ERROR "libhts HTS_INCLUDE_DIRS not found")
+find_library(HTS_LIBRARIES NAMES libhts.a hts HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/ ../htslib/)
+
+if(NOT HTS_INCLUDE_DIRS OR NOT HTS_LIBRARIES)
+    message(FATAL_ERROR "libhts not found")
 endif()
-
-message(STATUS ${HTS_INCLUDE_DIRS})
-
-find_library(HTS_LIBRARIES libhts.a hts HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/ ../htslib/)
-if(NOT HTS_LIBRARIES)
-    message(FATAL_ERROR "libhts HTS_LIBRARIES not found")
-endif()
-
-message(STATUS ${HTS_LIBRARIES})
-
 include_directories(${HTS_INCLUDE_DIRS})
 
+# --- 2. Define Sources ---
 set(SOURCE_FILES
-    genome_interval.cpp
-    gtf.cpp
-    hts_utils.cpp
-    params.cpp
-    phred_helper.cpp
-    qgen_error.cpp
-    qgen_utils.cpp
-    tsv_reader.cpp
-    commands.cpp
-    dataframe.cpp
-    qgenlib/dataframe.h
-    qgenlib/commands.h
-    qgenlib/genome_interval.h
-    qgenlib/gtf.h
-    qgenlib/hts_utils.h
-    qgenlib/phred_helper.h
-    qgenlib/qgen_error.h
-    qgenlib/qgen_utils.h
-    qgenlib/genome_loci.h
-    qgenlib/pos_loci.h
-    qgenlib/gtf_interval_tree.h
-    qgenlib/params.h
-    qgenlib/qgen_constant.h
-    qgenlib/qgen_except.h
-    qgenlib/tsv_reader.h)
+    genome_interval.cpp gtf.cpp hts_utils.cpp params.cpp phred_helper.cpp
+    qgen_error.cpp qgen_utils.cpp tsv_reader.cpp commands.cpp dataframe.cpp
+    # Headers usually don't need to be listed in SOURCE_FILES for compilation, 
+    # but it helps IDEs display them.
+)
 
 ADD_LIBRARY(qgen STATIC ${SOURCE_FILES})
 
-SET(APP_EXE testqgen)
+# --- 3. Use Standard Packages (The Fix) ---
 
-ADD_EXECUTABLE(${APP_EXE} test_qgen.cpp) 
+# Replace manual find_library with find_package for ZLIB
+find_package(ZLIB REQUIRED)
 
-find_library(ZLIB z HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
-if(NOT ZLIB)
-    message(FATAL_ERROR "libz library not found")
-endif()
+# Replace manual find_library with find_package for CURL
+find_package(CURL REQUIRED)
 
-find_library(CURLLIB curl HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
-if(NOT CURLLIB)
-    message(FATAL_ERROR "libcurl library not found")
-endif()
+# Replace manual find_library with find_package for OpenSSL (Crypto)
+find_package(OpenSSL REQUIRED)
 
-find_package (BZip2)
-if (NOT BZIP2_FOUND)
-    message(FATAL_ERROR "libbz2 library not found")
-else()
+# BZip2 (You already had this correct!)
+find_package(BZip2 REQUIRED)
+if(BZIP2_FOUND)
     include_directories(${BZIP2_INCLUDE_DIRS})
-    set(BZIP2 ${BZIP2_LIBRARIES})
 endif()
 
+# LZMA (Still manual because it's less standard, but okay)
 find_library(LZMA lzma HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
-if(NOT LZMA)
-    message(WARNING "liblzma library not found, if you specified --disable-lzma when compiling libhts, please ignore this warning")
-    set(LZMA "")
-else()
-    set(LZMA ${LZMA_LIBRARIES})
-endif()
 
-find_library(CRYPTOLIB crypto HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
-if(NOT CRYPTOLIB)
-    message(FATAL_ERROR "libcrypto library not found")
-endif()
+# --- 4. Link Libraries ---
+SET(APP_EXE testqgen)
+ADD_EXECUTABLE(${APP_EXE} test_qgen.cpp)
 
-TARGET_LINK_LIBRARIES(${APP_EXE} qgen ${HTS_LIBRARIES} ${ZLIB} ${ZLIB} ${BZIP2} ${LZMA} ${CURLLIB} ${CRYPTOLIB})
+# Use the variables provided by find_package (ZLIB::ZLIB, CURL::libcurl, OpenSSL::Crypto)
+# These automatically handle include dirs and linking flags.
+target_link_libraries(${APP_EXE} 
+    qgen 
+    ${HTS_LIBRARIES} 
+    ZLIB::ZLIB        # Better than ${ZLIB}
+    CURL::libcurl     # Better than ${CURLLIB}
+    OpenSSL::Crypto   # Better than ${CRYPTOLIB}
+    ${BZIP2_LIBRARIES} 
+    ${LZMA}
+)
 
 install(TARGETS ${APP_EXE} RUNTIME DESTINATION bin)
