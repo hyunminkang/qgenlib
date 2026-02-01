@@ -31,12 +31,14 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cstdint>
 #include <cstdlib>
 #include <climits>
 #include <cstring>
 #include <cmath>
 #include <cfloat>
 #include <vector>
+#include <cstdint>
 #include <map>
 #include <queue>
 
