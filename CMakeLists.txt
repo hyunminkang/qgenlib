@@ -52,6 +52,8 @@ find_library(LZMA lzma HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
 SET(APP_EXE testqgen)
 ADD_EXECUTABLE(${APP_EXE} test_qgen.cpp)
 
+set(DEFLATELIB deflate)
+
 # Use the variables provided by find_package (ZLIB::ZLIB, CURL::libcurl, OpenSSL::Crypto)
 # These automatically handle include dirs and linking flags.
 target_link_libraries(${APP_EXE} 
@@ -62,6 +64,7 @@ target_link_libraries(${APP_EXE}
     OpenSSL::Crypto   # Better than ${CRYPTOLIB}
     ${BZIP2_LIBRARIES} 
     ${LZMA}
+    ${DEFLATELIB}
 )
 
 install(TARGETS ${APP_EXE} RUNTIME DESTINATION bin)
