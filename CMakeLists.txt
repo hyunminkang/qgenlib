@@ -52,6 +52,17 @@ find_library(LZMA lzma HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/)
 SET(APP_EXE testqgen)
 ADD_EXECUTABLE(${APP_EXE} test_qgen.cpp)
 
+# --- Find libdeflate dynamically ---
+find_library(DEFLATE_LIBRARY NAMES deflate libdeflate HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/ /usr/lib64/ /opt/homebrew/lib)
+
+if(DEFLATE_LIBRARY)
+    message(STATUS "Found libdeflate: ${DEFLATE_LIBRARY}")
+else()
+    message(STATUS "libdeflate not found. Skipping.")
+    # Set to empty so target_link_libraries doesn't try to link a "NOTFOUND" variable
+    set(DEFLATE_LIBRARY "") 
+endif()
+
 # Use the variables provided by find_package (ZLIB::ZLIB, CURL::libcurl, OpenSSL::Crypto)
 # These automatically handle include dirs and linking flags.
 target_link_libraries(${APP_EXE} 
@@ -62,6 +73,7 @@ target_link_libraries(${APP_EXE}
     OpenSSL::Crypto   # Better than ${CRYPTOLIB}
     ${BZIP2_LIBRARIES} 
     ${LZMA}
+    ${DEFLATE_LIBRARY} # Now conditionally linked!
 )
 
 install(TARGETS ${APP_EXE} RUNTIME DESTINATION bin)
