@@ -24,6 +24,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <cstdint>
 #include <cstring>
 #include <climits>
 #include "qgen_error.h"

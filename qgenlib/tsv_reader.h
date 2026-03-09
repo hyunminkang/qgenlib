@@ -5,6 +5,7 @@
 #include <cstring>
 #include <climits>
 #include <vector>
+#include <cstdint>
 #include <map>
 #include <set>
 

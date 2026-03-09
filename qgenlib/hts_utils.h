@@ -26,11 +26,13 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
 #include <cfloat>
 #include <vector>
+#include <cstdint>
 #include <map>
 #include <queue>
 #include <sys/stat.h>

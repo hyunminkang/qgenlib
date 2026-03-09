@@ -4,6 +4,7 @@
 // this is very similar to genomeLocus, except that chrom is not a part of the key
 
 #include <vector>
+#include <cstdint>
 #include <set>
 #include <map>
 #include <cstring>
