@@ -32,6 +32,7 @@
 #include <cmath>
 #include <cfloat>
 #include <vector>
+#include <cstdint>
 #include <map>
 #include "hts_utils.h"
 #include "qgen_utils.h"

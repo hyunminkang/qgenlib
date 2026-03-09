@@ -2,6 +2,7 @@
 #define __GENOME_LOCI_H
 
 #include <vector>
+#include <cstdint>
 #include <set>
 #include <map>
 #include <cstring>

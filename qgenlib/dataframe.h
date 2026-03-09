@@ -2,6 +2,7 @@
 #define __DATAFRAME_H
 
 #include <vector>
+#include <cstdint>
 #include <string>
 #include <map>
 
